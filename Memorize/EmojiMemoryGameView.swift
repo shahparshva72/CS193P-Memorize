@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  EmojiMemoryGameView.swift
 //  Memorize
 //
 //  Created by Parshva Shah on 5/28/21.
@@ -7,35 +7,35 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct EmojiMemoryGameView: View {
     
-    @ObservedObject var viewModel: EmojiMemoryGame
+    @ObservedObject var game: EmojiMemoryGame
 
     var body: some View {
         VStack {
-            Text(viewModel.themeName).font(.largeTitle)
+            Text(game.themeName).font(.largeTitle)
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]){
-                    ForEach(viewModel.cards, id: \.id){ card in
+                    ForEach(game.cards, id: \.id){ card in
                         HStack {
-                            CardView(card: card, themeColor: viewModel.themeColor)
+                            CardView(card: card, themeColor: game.themeColor)
                                 .aspectRatio(2/3, contentMode: .fit)
                                 .onTapGesture {
-                                    viewModel.choose(card)
+                                    game.choose(card)
                                 }
                         }
                     }
                 }
-                .foregroundColor(Color(viewModel.themeColor))
+                .foregroundColor(Color(game.themeColor))
             }
             
-            Text("Score: \(viewModel.gameScore)")
+            Text("Score: \(game.gameScore)")
                 .font(.largeTitle)
             
             Spacer().frame(height: 10)
             
             Button(action: {
-                viewModel.createNewGame()
+                game.createNewGame()
             }, label: {
                 Text("New Game")
                     .font(.title)
@@ -49,8 +49,8 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
         Group {
-            ContentView(viewModel: game)
-            ContentView(viewModel: game)
+            EmojiMemoryGameView(game: game)
+            EmojiMemoryGameView(game: game)
                 .preferredColorScheme(.dark)
         }
     }
@@ -61,21 +61,32 @@ struct CardView: View {
     let themeColor: UIColor
     
     var body: some View {
-        ZStack{
-            let shape = RoundedRectangle(cornerRadius: 20)
-            
-            if card.isFaceUp {
-                shape.fill().foregroundColor(.white)
-                shape.strokeBorder(lineWidth: 3)
-                Text(card.content)
-                    .font(.largeTitle)
-            } else if card.isMatched {
-                shape.opacity(0)
-            }
-            else {
-                shape.fill().foregroundColor(Color(themeColor))
+        GeometryReader { geometry in
+            ZStack{
+                let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
+                
+                if card.isFaceUp {
+                    shape.fill().foregroundColor(.white)
+                    shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                    Text(card.content).font(font(in: geometry.size))
+                } else if card.isMatched {
+                    shape.opacity(0)
+                }
+                else {
+                    shape.fill().foregroundColor(Color(themeColor))
+                }
             }
         }
+    }
+    
+    private func font(in size: CGSize) -> Font {
+        return Font.system(size: min(size.width, size.height) * DrawingConstants.fontScale)
+    }
+    
+    private struct DrawingConstants {
+        static let cornerRadius: CGFloat = 20
+        static let lineWidth: CGFloat = 3
+        static let fontScale: CGFloat = 0.8
     }
 }
 
