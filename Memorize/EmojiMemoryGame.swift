@@ -40,7 +40,7 @@ class EmojiMemoryGame: ObservableObject {
                   Theme(themeName: "Sports",
                         emojis: ["⚽️", "🏀", "🥎", "🏈", "🎱", "🏓", "🏸", "🏏", "🏹", "🥊", "🛼", "🏒", "🥋"],
                         numberOfPairsOfCards: 10,
-                        themeColor: #colorLiteral(red: 0.5741485357, green: 0.5741624236, blue: 0.574154973, alpha: 1))]
+                        themeColor: #colorLiteral(red: 0.9607843161, green: 0.7058823705, blue: 0.200000003, alpha: 1))]
     
     static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
         return MemoryGame<String>(numberOfPairsOfCards: theme.numberOfPairsOfCards) { pairIndex in
